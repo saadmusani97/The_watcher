@@ -325,6 +325,7 @@ export class StyleManager extends ShellFacade {
         _cockpitResetGlobeBtn: this._cockpitResetGlobeBtn,
         _locationMiniCity: this._locationMiniCity,
         _locationMiniPoi: this._locationMiniPoi,
+        _myLocationBtn: this._myLocationBtn,
       },
       operations: {
         _beginDeferredNavigation: (...args) =>

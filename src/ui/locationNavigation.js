@@ -144,6 +144,62 @@ export class LocationNavigation {
       onSearch: (query) => this._locationLookup.run(query),
       onReset: () => this.resetToGlobeView(),
     });
+
+    // My Location button — fly to user's live GPS position
+    if (this._myLocationBtn) {
+      this._myLocationBtn.addEventListener('click', () =>
+        this._flyToMyLocation(),
+      );
+    }
+  }
+
+  _flyToMyLocation() {
+    if (!navigator.geolocation) {
+      this._showToast('GPS not available in this browser');
+      return;
+    }
+    const btn = this._myLocationBtn;
+    if (btn) {
+      btn.disabled = true;
+      btn.classList.add('locating');
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('locating');
+        }
+        const { latitude, longitude, accuracy } = pos.coords;
+        // Fly to the GPS position — altitude ~500 m above ground
+        this.viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, 500),
+          orientation: {
+            heading: Cesium.Math.toRadians(0),
+            pitch: Cesium.Math.toRadians(-45),
+            roll: 0,
+          },
+          duration: 2.5,
+        });
+        const accuracyText =
+          accuracy < 100
+            ? `±${Math.round(accuracy)}m`
+            : `±${Math.round(accuracy / 1000)}km`;
+        this._showToast(`📍 Your location (${accuracyText})`);
+      },
+      (err) => {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('locating');
+        }
+        const messages = {
+          1: 'Location access denied — allow it in browser settings',
+          2: 'Location unavailable',
+          3: 'Location request timed out',
+        };
+        this._showToast(messages[err.code] || 'Could not get location');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
   }
 
   _beginWorldJumpTransition() {

@@ -269,6 +269,45 @@
   border-color: var(--glass-border-hover);
 }
 
+/* My Location GPS button */
+.my-location-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 18px;
+  flex-shrink: 0;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.my-location-btn:hover {
+  background: rgba(0, 212, 255, 0.18);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+
+.my-location-btn:disabled,
+.my-location-btn.locating {
+  opacity: 0.5;
+  cursor: wait;
+  animation: locating-pulse 1s ease-in-out infinite;
+}
+
+@keyframes locating-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(0, 212, 255, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(0, 212, 255, 0.8); }
+}
+
 #location-search {
   width: 0;
   padding: 0;
